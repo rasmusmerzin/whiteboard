@@ -1,0 +1,46 @@
+.frame {
+  width: 100%;
+  height: 100%;
+  padding: 4px;
+  box-sizing: border-box;
+}
+
+.board {
+  width: 100%;
+  height: 100%;
+  background: #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+  position: relative;
+  cursor: grab;
+}
+
+.shadow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 8px;
+  box-shadow: inset 0 0 8px #0004;
+  pointer-events: none;
+}
+
+.background {
+  position: absolute;
+  width: calc(100% + 48px);
+  height: calc(100% + 48px);
+  transform: translate(-24px, -24px);
+  pointer-events: none;
+  background-image: url(/dot.svg);
+}
+
+.anchor {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+}
+
+.origin {
+  position: absolute;
+}
