@@ -1,9 +1,11 @@
 import { Note } from "./Note";
 import styles from "./Board.module.css";
-import { useState } from "react";
+import { useState, useContext } from "react";
+import { Document } from "./Document";
 
 export function Board() {
   const [position, setPosition] = useState({ x: 0, y: 0 });
+  const data = useContext(Document);
   function startDrag(event: React.MouseEvent) {
     if (event.button) return;
     event.stopPropagation();
@@ -39,8 +41,9 @@ export function Board() {
               top: position.y,
             }}
           >
-            <Note />
-            <Note />
+            {data.notes.map((note) => (
+              <Note key={note.id} note={note} />
+            ))}
           </div>
         </div>
         <div className={styles.shadow}></div>
