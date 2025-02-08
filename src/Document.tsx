@@ -14,7 +14,10 @@ export type Note = {
 export type DocumentDispatch = (action: DocumentAction) => void;
 
 export type DocumentAction =
-  | { type: "addNote" }
+  | {
+      type: "addNote";
+      position: { x: number; y: number };
+    }
   | {
       type: "removeNote";
       id: string;
@@ -58,7 +61,10 @@ function documentReducer(state: Document, action: DocumentAction): Document {
     case "addNote":
       return {
         ...state,
-        notes: [...state.notes, { id: uid(), x: 0, y: 0, content: "" }],
+        notes: [
+          ...state.notes,
+          { id: uid(), position: action.position, content: "" },
+        ],
       };
     case "removeNote":
       return {

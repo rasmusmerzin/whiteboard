@@ -1,0 +1,40 @@
+.contextmenu {
+  position: fixed;
+  min-width: 120px;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border: 1px solid #888;
+  border-radius: 8px;
+  grid-gap: 4px;
+  padding: 4px 0;
+  animation: fade-in 200ms;
+  button {
+    cursor: pointer;
+    background: none;
+    border: none;
+    text-align: left;
+    padding: 4px 16px;
+    &:not(:disabled):hover {
+      background-color: #f0f0f0;
+    }
+  }
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #0000;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

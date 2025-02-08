@@ -2,6 +2,8 @@ import { useContext, useCallback, useEffect, useState } from "react";
 import styles from "./Note.module.css";
 import { type Note, DocumentDispatch } from "./Document";
 import { throttle } from "./throttle";
+import { ContextMenuCallback } from "./ContextMenu";
+import { drag } from "./drag";
 
 export function Note({ note }: { note: Note }) {
   const dispatch = useContext(DocumentDispatch);
@@ -19,46 +21,42 @@ export function Note({ note }: { note: Note }) {
     }, 200),
     [note.id, dispatch]
   );
+  const dispatchPop = useCallback(() => {
+    dispatch({ type: "popNote", id: note.id });
+  }, [note.id, dispatch]);
+  const contextmenu = useContext(ContextMenuCallback)([
+    {
+      label: "Delete",
+      action: () => dispatch({ type: "removeNote", id: note.id }),
+    },
+    { label: "Focus", disabled: true },
+  ]);
   useEffect(() => {
     setPosition(note.position);
   }, [note.position]);
   useEffect(() => {
     setContent(note.content);
   }, [note.content]);
-  function startDrag(event: React.MouseEvent) {
-    if (event.button) return;
-    dispatch({ type: "popNote", id: note.id });
-    event.stopPropagation();
-    const { clientX, clientY } = event;
-    function drag(event: MouseEvent) {
-      const p = {
-        x: position.x + event.clientX - clientX,
-        y: position.y + event.clientY - clientY,
-      };
-      setPosition(p);
-      dispatchPosition(p);
-    }
-    function stopDrag() {
-      document.removeEventListener("mousemove", drag);
-      document.removeEventListener("mouseup", stopDrag);
-    }
-    document.addEventListener("mousemove", drag);
-    document.addEventListener("mouseup", stopDrag);
-  }
+  const startDrag = drag(position, (position) => {
+    setPosition(position);
+    dispatchPosition(position);
+  });
   return (
     <textarea
       spellCheck={false}
       onMouseDown={startDrag}
+      onChange={(event) => {
+        setContent(event.target.value);
+        dispatchContent(event.target.value);
+      }}
+      onContextMenu={contextmenu}
+      onFocus={dispatchPop}
       className={styles.note}
       style={{
         left: position.x,
         top: position.y,
       }}
       value={content}
-      onChange={(event) => {
-        setContent(event.target.value);
-        dispatchContent(event.target.value);
-      }}
     ></textarea>
   );
 }
