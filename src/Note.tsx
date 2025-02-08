@@ -5,7 +5,13 @@ import { throttle } from "./throttle";
 import { ContextMenuCallback } from "./ContextMenu";
 import { drag } from "./drag";
 
-export function Note({ note }: { note: Note }) {
+export function Note({
+  note,
+  moveTo,
+}: {
+  note: Note;
+  moveTo: (x: number, y: number) => void;
+}) {
   const dispatch = useContext(DocumentDispatch);
   const [position, setPosition] = useState(note.position);
   const [content, setContent] = useState(note.content);
@@ -29,7 +35,14 @@ export function Note({ note }: { note: Note }) {
       label: "Delete",
       action: () => dispatch({ type: "removeNote", id: note.id }),
     },
-    { label: "Focus", disabled: true },
+    {
+      label: "Focus",
+      action: () => moveTo(-position.x, -position.y),
+    },
+    {
+      label: "Clone",
+      action: () => dispatch({ type: "cloneNote", id: note.id }),
+    },
   ]);
   useEffect(() => {
     setPosition(note.position);

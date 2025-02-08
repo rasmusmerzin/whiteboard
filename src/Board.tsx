@@ -1,9 +1,10 @@
 import { Note } from "./Note";
 import styles from "./Board.module.css";
-import { useState, useContext, useRef } from "react";
+import { useState, useContext, useRef, useCallback } from "react";
 import { Document, DocumentDispatch } from "./Document";
 import { ContextMenuCallback } from "./ContextMenu";
 import { drag } from "./drag";
+import { animatePosition } from "./animate";
 
 export function Board() {
   const [position, setPosition] = useState({ x: 0, y: 0 });
@@ -24,8 +25,17 @@ export function Board() {
         });
       },
     },
-    { label: "Move to origin", disabled: true },
+    {
+      label: "Move to origin",
+      disabled: position.x === 0 && position.y === 0,
+      action: () => animatePosition(position, { x: 0, y: 0 }, 100, setPosition),
+    },
   ]);
+  const moveTo = useCallback(
+    (x: number, y: number) =>
+      animatePosition(position, { x, y }, 100, setPosition),
+    [position, setPosition]
+  );
   const startDrag = drag(position, setPosition);
   return (
     <div className={styles.frame}>
@@ -50,7 +60,7 @@ export function Board() {
             }}
           >
             {data.notes.map((note) => (
-              <Note key={note.id} note={note} />
+              <Note key={note.id} note={note} moveTo={moveTo} />
             ))}
           </div>
         </div>

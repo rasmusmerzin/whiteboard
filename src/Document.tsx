@@ -35,6 +35,10 @@ export type DocumentAction =
   | {
       type: "popNote";
       id: string;
+    }
+  | {
+      type: "cloneNote";
+      id: string;
     };
 
 export const Document = createContext<Document>(null!);
@@ -90,5 +94,19 @@ function documentReducer(state: Document, action: DocumentAction): Document {
       if (noteIndex === -1) return state;
       state.notes.push(...state.notes.splice(noteIndex, 1));
       return { ...state, notes: Array.from(state.notes) };
+    case "cloneNote":
+      const note = state.notes.find((note) => note.id === action.id);
+      if (!note) return state;
+      return {
+        ...state,
+        notes: [
+          ...state.notes,
+          {
+            ...note,
+            id: uid(),
+            position: { x: note.position.x + 10, y: note.position.y + 10 },
+          },
+        ],
+      };
   }
 }
