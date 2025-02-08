@@ -13,6 +13,7 @@ export function Board() {
   const dispatch = useContext(DocumentDispatch);
   const contextmenu = useContext(ContextMenuCallback)([
     {
+      icon: "add",
       label: "Add note",
       action(event) {
         const rect = anchor.current!.getBoundingClientRect();
@@ -26,6 +27,7 @@ export function Board() {
       },
     },
     {
+      icon: "recenter",
       label: "Move to origin",
       disabled: position.x === 0 && position.y === 0,
       action: () => animatePosition(position, { x: 0, y: 0 }, 100, setPosition),

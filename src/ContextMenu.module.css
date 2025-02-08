@@ -1,6 +1,6 @@
 .contextmenu {
   position: fixed;
-  min-width: 120px;
+  min-width: 192px;
   display: flex;
   flex-direction: column;
   background: #fff;
@@ -9,16 +9,35 @@
   grid-gap: 4px;
   padding: 4px 0;
   animation: fade-in 200ms;
-  button {
-    cursor: pointer;
-    background: none;
-    border: none;
-    text-align: left;
-    padding: 4px 16px;
-    &:not(:disabled):hover {
-      background-color: #f0f0f0;
-    }
+}
+
+.item {
+  position: relative;
+  cursor: pointer;
+  background: none;
+  border: none;
+  text-align: left;
+  padding: 8px 24px 8px 40px;
+  font-size: 16px;
+  line-height: 1;
+  white-space: nowrap;
+  &:not(:disabled):hover {
+    background-color: #f0f0f0;
   }
+}
+
+.icon {
+  font-family: Symbol;
+  position: absolute;
+  left: 8px;
+  top: 50%;
+  font-size: 18px;
+  transform: translateY(-50%);
+  width: 32px;
+  height: 32px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .overlay {

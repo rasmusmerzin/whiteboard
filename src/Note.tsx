@@ -32,14 +32,17 @@ export function Note({
   }, [note.id, dispatch]);
   const contextmenu = useContext(ContextMenuCallback)([
     {
+      icon: "delete",
       label: "Delete",
       action: () => dispatch({ type: "removeNote", id: note.id }),
     },
     {
+      icon: "filter_center_focus",
       label: "Focus",
       action: () => moveTo(-position.x, -position.y),
     },
     {
+      icon: "content_copy",
       label: "Clone",
       action: () => dispatch({ type: "cloneNote", id: note.id }),
     },

@@ -5,6 +5,7 @@ export type ContextMenu = ContextMenuAction[];
 
 export type ContextMenuAction = {
   label: string;
+  icon?: string;
   action?: (event: React.MouseEvent) => void;
   disabled?: boolean;
 };
@@ -46,8 +47,9 @@ export function ContextMenuProvider({
             onContextMenu={(event) => event.preventDefault()}
             onMouseDown={(event) => event.stopPropagation()}
           >
-            {menu.map(({ label, action, disabled }, index) => (
+            {menu.map(({ label, icon, action, disabled }, index) => (
               <button
+                className={styles.item}
                 key={index}
                 onClick={(event) => {
                   if (action) action(event);
@@ -55,6 +57,7 @@ export function ContextMenuProvider({
                 }}
                 disabled={disabled}
               >
+                {icon && <div className={styles.icon}>{icon}</div>}
                 {label}
               </button>
             ))}
