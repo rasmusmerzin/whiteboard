@@ -1,18 +1,17 @@
-import { useContext, useCallback, useEffect, useState } from "react";
+import { useContext, useCallback, useEffect, useState, useRef } from "react";
 import styles from "./Note.module.css";
 import { type Note, DocumentDispatch } from "./Document";
 import { throttle } from "./throttle";
 import { ContextMenuCallback } from "./ContextMenu";
 import { drag } from "./drag";
 import { useViewStore } from "./viewStore";
+import { uid } from "./uid";
 
-export function Note({
-  note,
-  moveTo,
-}: {
-  note: Note;
-  moveTo: (x: number, y: number) => void;
-}) {
+export function Note({ note }: { note: Note }) {
+  const textarea = useRef<HTMLTextAreaElement>(null);
+  const selected = useViewStore((state) => state.selected);
+  const setSelected = useViewStore((state) => state.setSelected);
+  const animatePosition = useViewStore((state) => state.animatePosition);
   const dispatch = useContext(DocumentDispatch);
   const [position, setPosition] = useState(note.position);
   const [content, setContent] = useState(note.content);
@@ -28,9 +27,6 @@ export function Note({
     }, 200),
     [note.id, dispatch]
   );
-  const dispatchPop = useCallback(() => {
-    dispatch({ type: "popNote", id: note.id });
-  }, [note.id, dispatch]);
   const contextMenuCallback = useContext(ContextMenuCallback);
   useEffect(() => {
     setPosition(note.position);
@@ -38,12 +34,16 @@ export function Note({
   useEffect(() => {
     setContent(note.content);
   }, [note.content]);
+  useEffect(() => {
+    if (note.id === selected && textarea.current) textarea.current.focus();
+  }, [note.id, selected]);
   const startDrag = drag(position, (position) => {
     setPosition(position);
     dispatchPosition(position);
   });
   return (
     <textarea
+      ref={textarea}
       spellCheck={false}
       onMouseDown={startDrag}
       onChange={(event) => {
@@ -56,23 +56,34 @@ export function Note({
           {
             icon: "filter_center_focus",
             label: "Focus",
-            action: () => moveTo(-position.x, -position.y),
+            action: () => animatePosition({ x: -position.x, y: -position.y }),
             disabled:
               viewPosition.x === -position.x && viewPosition.y === -position.y,
           },
           {
             icon: "content_copy",
             label: "Clone",
-            action: () => dispatch({ type: "cloneNote", id: note.id }),
+            action: () => {
+              const cloneId = uid();
+              dispatch({ type: "cloneNote", id: note.id, cloneId });
+              setTimeout(() => setSelected(cloneId));
+            },
           },
           {
             icon: "delete",
             label: "Delete",
-            action: () => dispatch({ type: "removeNote", id: note.id }),
+            action: () => {
+              dispatch({ type: "removeNote", id: note.id });
+              setSelected("");
+            },
           },
         ])(event);
       }}
-      onFocus={dispatchPop}
+      onFocus={() => {
+        dispatch({ type: "popNote", id: note.id });
+        setSelected(note.id);
+      }}
+      onBlur={() => setSelected("")}
       className={styles.note}
       style={{
         left: position.x,

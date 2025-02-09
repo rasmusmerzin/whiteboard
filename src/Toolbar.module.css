@@ -2,24 +2,31 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 4px 0 4px 4px;
+  padding: 8px 0 8px 8px;
   box-sizing: border-box;
+}
 
-  button {
-    cursor: pointer;
-    border: none;
-    background: none;
-    width: 40px;
-    height: 40px;
-    border-radius: 8px;
-    font-family: Symbol;
-    line-height: 1;
-    font-size: 24px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    &:not(:disabled):hover {
-      background-color: #ddd;
-    }
+.button {
+  cursor: pointer;
+  border: none;
+  background: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  font-family: Symbol;
+  line-height: 1;
+  font-size: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  &:not(:disabled):hover {
+    background-color: #ddd;
   }
+}
+
+.divider {
+  width: 100%;
+  height: 1px;
+  background: #0004;
+  margin: 8px 0;
 }

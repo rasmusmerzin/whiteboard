@@ -1,5 +1,4 @@
 import { createContext, useReducer } from "react";
-import { uid } from "./uid";
 
 export type Document = {
   notes: Note[];
@@ -15,6 +14,7 @@ export type DocumentDispatch = (action: DocumentAction) => void;
 
 export type DocumentAction =
   | {
+      id: string;
       type: "addNote";
       position: { x: number; y: number };
     }
@@ -39,6 +39,7 @@ export type DocumentAction =
   | {
       type: "cloneNote";
       id: string;
+      cloneId: string;
     };
 
 export const Document = createContext<Document>(null!);
@@ -67,7 +68,7 @@ function documentReducer(state: Document, action: DocumentAction): Document {
         ...state,
         notes: [
           ...state.notes,
-          { id: uid(), position: action.position, content: "" },
+          { id: action.id, position: action.position, content: "" },
         ],
       };
     case "removeNote":
@@ -103,7 +104,7 @@ function documentReducer(state: Document, action: DocumentAction): Document {
           ...state.notes,
           {
             ...note,
-            id: uid(),
+            id: action.cloneId,
             position: { x: note.position.x + 10, y: note.position.y + 10 },
           },
         ],

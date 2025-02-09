@@ -1,15 +1,17 @@
 import styles from "./Board.module.css";
 import { Note } from "./Note";
-import { useContext, useRef, useCallback } from "react";
+import { useContext, useRef } from "react";
 import { Document, DocumentDispatch } from "./Document";
 import { ContextMenuCallback } from "./ContextMenu";
 import { drag } from "./drag";
-import { animatePosition } from "./animate";
 import { useViewStore } from "./viewStore";
+import { uid } from "./uid";
 
 export function Board() {
   const position = useViewStore((state) => state.position);
   const setPosition = useViewStore((state) => state.setPosition);
+  const setSelected = useViewStore((state) => state.setSelected);
+  const animatePosition = useViewStore((state) => state.animatePosition);
   const anchor = useRef<HTMLDivElement>(null);
   const data = useContext(Document);
   const dispatch = useContext(DocumentDispatch);
@@ -19,27 +21,25 @@ export function Board() {
       label: "Add note",
       action(event) {
         const rect = anchor.current!.getBoundingClientRect();
+        const id = uid();
         dispatch({
+          id,
           type: "addNote",
           position: {
             x: event.clientX - rect.left - position.x,
             y: event.clientY - rect.top - position.y,
           },
         });
+        setTimeout(() => setSelected(id));
       },
     },
     {
       icon: "recenter",
       label: "Move to origin",
       disabled: position.x === 0 && position.y === 0,
-      action: () => animatePosition(position, { x: 0, y: 0 }, 100, setPosition),
+      action: () => animatePosition({ x: 0, y: 0 }),
     },
   ]);
-  const moveTo = useCallback(
-    (x: number, y: number) =>
-      animatePosition(position, { x, y }, 100, setPosition),
-    [position, setPosition]
-  );
   const startDrag = drag(position, setPosition);
   return (
     <div className={styles.frame}>
@@ -64,7 +64,7 @@ export function Board() {
             }}
           >
             {data.notes.map((note) => (
-              <Note key={note.id} note={note} moveTo={moveTo} />
+              <Note key={note.id} note={note} />
             ))}
           </div>
         </div>
