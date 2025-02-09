@@ -1,4 +1,5 @@
 .contextmenu {
+  z-index: 1000;
   position: fixed;
   min-width: 192px;
   display: flex;
@@ -41,6 +42,7 @@
 }
 
 .overlay {
+  z-index: 1000;
   position: fixed;
   top: 0;
   left: 0;

@@ -29,14 +29,14 @@ export function Toolbar() {
           setTimeout(() => setSelected(id));
         }}
       >
-        add
+        <span>add</span>
       </button>
       <button
         className={styles.button}
         disabled={viewPosition.x === 0 && viewPosition.y === 0}
         onClick={() => animatePosition({ x: 0, y: 0 })}
       >
-        recenter
+        <span>recenter</span>
       </button>
       {note && (
         <>
@@ -52,7 +52,7 @@ export function Toolbar() {
               setTimeout(() => setSelected(note.id));
             }}
           >
-            filter_center_focus
+            <span>filter_center_focus</span>
           </button>
           <button
             className={styles.button}
@@ -62,13 +62,13 @@ export function Toolbar() {
               setTimeout(() => setSelected(cloneId));
             }}
           >
-            content_copy
+            <span>content_copy</span>
           </button>
           <button
             className={styles.button}
             onMouseDown={() => dispatch({ type: "removeNote", id: note.id })}
           >
-            delete
+            <span>delete</span>
           </button>
         </>
       )}

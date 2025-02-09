@@ -5,6 +5,7 @@ export type Document = {
 };
 
 export type Note = {
+  z: number;
   id: string;
   position: { x: number; y: number };
   content: string;
@@ -48,8 +49,13 @@ export const DocumentDispatch = createContext<DocumentDispatch>(null!);
 export function DocumentProvider({ children }: { children: React.ReactNode }) {
   const [document, dispatch] = useReducer(documentReducer, {
     notes: [
-      { id: "1", position: { x: 0, y: 0 }, content: "Hello, world!" },
-      { id: "2", position: { x: 100, y: 100 }, content: "Goodbye, world!" },
+      { z: 1, id: "1", position: { x: 0, y: 0 }, content: "Hello, world!" },
+      {
+        z: 2,
+        id: "2",
+        position: { x: 100, y: 100 },
+        content: "Goodbye, world!",
+      },
     ],
   });
   return (
@@ -62,19 +68,30 @@ export function DocumentProvider({ children }: { children: React.ReactNode }) {
 }
 
 function documentReducer(state: Document, action: DocumentAction): Document {
+  let noteIndex: number;
   switch (action.type) {
     case "addNote":
       return {
         ...state,
         notes: [
           ...state.notes,
-          { id: action.id, position: action.position, content: "" },
+          {
+            z: state.notes.length + 1,
+            id: action.id,
+            position: action.position,
+            content: "",
+          },
         ],
       };
     case "removeNote":
+      noteIndex = state.notes.findIndex((note) => note.id === action.id);
+      if (noteIndex === -1) return state;
+      const [deletedNote] = state.notes.splice(noteIndex, 1);
       return {
         ...state,
-        notes: state.notes.filter((note) => note.id !== action.id),
+        notes: state.notes.map((note) =>
+          note.z > deletedNote.z ? { ...note, z: note.z - 1 } : note
+        ),
       };
     case "moveNote":
       return {
@@ -91,10 +108,19 @@ function documentReducer(state: Document, action: DocumentAction): Document {
         ),
       };
     case "popNote":
-      const noteIndex = state.notes.findIndex((note) => note.id === action.id);
+      noteIndex = state.notes.findIndex((note) => note.id === action.id);
       if (noteIndex === -1) return state;
-      state.notes.push(...state.notes.splice(noteIndex, 1));
-      return { ...state, notes: Array.from(state.notes) };
+      const { z } = state.notes[noteIndex];
+      return {
+        ...state,
+        notes: state.notes.map((note) =>
+          note.z > z
+            ? { ...note, z: note.z - 1 }
+            : note.z === z
+              ? { ...note, z: state.notes.length }
+              : note
+        ),
+      };
     case "cloneNote":
       const note = state.notes.find((note) => note.id === action.id);
       if (!note) return state;

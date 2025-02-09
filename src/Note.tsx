@@ -86,6 +86,7 @@ export function Note({ note }: { note: Note }) {
       onBlur={() => setSelected("")}
       className={styles.note}
       style={{
+        zIndex: note.z,
         left: position.x,
         top: position.y,
       }}

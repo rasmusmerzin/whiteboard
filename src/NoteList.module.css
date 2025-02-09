@@ -1,24 +1,26 @@
-.toolbar {
+.list {
   display: flex;
   flex-direction: column;
-  padding: 8px 0 8px 8px;
+  padding: 8px 8px 8px 0;
+  width: 320px;
+  overflow: auto;
 }
 
 .button {
+  flex-shrink: 0;
   position: relative;
   overflow: hidden;
   cursor: pointer;
   border: none;
   background: none;
-  width: 40px;
   height: 40px;
+  padding: 12px;
   border-radius: 8px;
-  font-family: Symbol;
   line-height: 1;
-  font-size: 24px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  font-size: 14px;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   &:not(:disabled):hover::before {
     content: "";
     position: absolute;
@@ -32,10 +34,12 @@
   span {
     position: relative;
   }
+  i {
+    opacity: 0.5;
+  }
 }
 
-.divider {
-  height: 1px;
-  background: #0004;
-  margin: 8px 0;
+.selected {
+  background: #000;
+  color: #fff;
 }

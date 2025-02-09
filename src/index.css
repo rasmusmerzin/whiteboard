@@ -12,4 +12,5 @@ body {
 
 #root {
   height: 100dvh;
+  user-select: none;
 }
