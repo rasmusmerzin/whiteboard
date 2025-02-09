@@ -4,6 +4,7 @@ import { type Note, DocumentDispatch } from "./Document";
 import { throttle } from "./throttle";
 import { ContextMenuCallback } from "./ContextMenu";
 import { drag } from "./drag";
+import { useViewStore } from "./viewStore";
 
 export function Note({
   note,
@@ -30,23 +31,7 @@ export function Note({
   const dispatchPop = useCallback(() => {
     dispatch({ type: "popNote", id: note.id });
   }, [note.id, dispatch]);
-  const contextmenu = useContext(ContextMenuCallback)([
-    {
-      icon: "delete",
-      label: "Delete",
-      action: () => dispatch({ type: "removeNote", id: note.id }),
-    },
-    {
-      icon: "filter_center_focus",
-      label: "Focus",
-      action: () => moveTo(-position.x, -position.y),
-    },
-    {
-      icon: "content_copy",
-      label: "Clone",
-      action: () => dispatch({ type: "cloneNote", id: note.id }),
-    },
-  ]);
+  const contextMenuCallback = useContext(ContextMenuCallback);
   useEffect(() => {
     setPosition(note.position);
   }, [note.position]);
@@ -65,7 +50,28 @@ export function Note({
         setContent(event.target.value);
         dispatchContent(event.target.value);
       }}
-      onContextMenu={contextmenu}
+      onContextMenu={(event) => {
+        const viewPosition = useViewStore.getState().position;
+        contextMenuCallback([
+          {
+            icon: "filter_center_focus",
+            label: "Focus",
+            action: () => moveTo(-position.x, -position.y),
+            disabled:
+              viewPosition.x === -position.x && viewPosition.y === -position.y,
+          },
+          {
+            icon: "content_copy",
+            label: "Clone",
+            action: () => dispatch({ type: "cloneNote", id: note.id }),
+          },
+          {
+            icon: "delete",
+            label: "Delete",
+            action: () => dispatch({ type: "removeNote", id: note.id }),
+          },
+        ])(event);
+      }}
       onFocus={dispatchPop}
       className={styles.note}
       style={{

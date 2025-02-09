@@ -1,17 +1,19 @@
-import { Note } from "./Note";
 import styles from "./Board.module.css";
-import { useState, useContext, useRef, useCallback } from "react";
+import { Note } from "./Note";
+import { useContext, useRef, useCallback } from "react";
 import { Document, DocumentDispatch } from "./Document";
 import { ContextMenuCallback } from "./ContextMenu";
 import { drag } from "./drag";
 import { animatePosition } from "./animate";
+import { useViewStore } from "./viewStore";
 
 export function Board() {
-  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const position = useViewStore((state) => state.position);
+  const setPosition = useViewStore((state) => state.setPosition);
   const anchor = useRef<HTMLDivElement>(null);
   const data = useContext(Document);
   const dispatch = useContext(DocumentDispatch);
-  const contextmenu = useContext(ContextMenuCallback)([
+  const onContextMenu = useContext(ContextMenuCallback)([
     {
       icon: "add",
       label: "Add note",
@@ -44,7 +46,7 @@ export function Board() {
       <div
         className={styles.board}
         onMouseDown={startDrag}
-        onContextMenu={contextmenu}
+        onContextMenu={onContextMenu}
       >
         <div
           className={styles.background}
