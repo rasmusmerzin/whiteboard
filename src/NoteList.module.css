@@ -1,9 +1,13 @@
-.list {
-  display: flex;
-  flex-direction: column;
+.frame {
   padding: 8px 8px 8px 0;
   width: 320px;
   overflow: auto;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  position: relative;
 }
 
 .button {
@@ -13,8 +17,8 @@
   cursor: pointer;
   border: none;
   background: none;
-  height: 40px;
-  padding: 12px;
+  height: 32px;
+  padding: 8px;
   border-radius: 8px;
   line-height: 1;
   font-size: 14px;
@@ -42,4 +46,17 @@
 .selected {
   background: #000;
   color: #fff;
+  font-weight: bold;
+}
+
+.dragging {
+  opacity: 0.5;
+}
+
+.divider {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: #0004;
 }

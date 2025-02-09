@@ -41,6 +41,11 @@ export type DocumentAction =
       type: "cloneNote";
       id: string;
       cloneId: string;
+    }
+  | {
+      type: "reorderNote";
+      id: string;
+      index: number;
     };
 
 export const Document = createContext<Document>(null!);
@@ -49,7 +54,12 @@ export const DocumentDispatch = createContext<DocumentDispatch>(null!);
 export function DocumentProvider({ children }: { children: React.ReactNode }) {
   const [document, dispatch] = useReducer(documentReducer, {
     notes: [
-      { z: 1, id: "1", position: { x: 0, y: 0 }, content: "Hello, world!" },
+      {
+        z: 1,
+        id: "1",
+        position: { x: 0, y: 0 },
+        content: "Hello, world!",
+      },
       {
         z: 2,
         id: "2",
@@ -69,6 +79,7 @@ export function DocumentProvider({ children }: { children: React.ReactNode }) {
 
 function documentReducer(state: Document, action: DocumentAction): Document {
   let noteIndex: number;
+  let note: Note | undefined;
   switch (action.type) {
     case "addNote":
       return {
@@ -122,7 +133,7 @@ function documentReducer(state: Document, action: DocumentAction): Document {
         ),
       };
     case "cloneNote":
-      const note = state.notes.find((note) => note.id === action.id);
+      note = state.notes.find((note) => note.id === action.id);
       if (!note) return state;
       return {
         ...state,
@@ -130,10 +141,17 @@ function documentReducer(state: Document, action: DocumentAction): Document {
           ...state.notes,
           {
             ...note,
+            z: state.notes.length + 1,
             id: action.cloneId,
             position: { x: note.position.x + 10, y: note.position.y + 10 },
           },
         ],
       };
+    case "reorderNote":
+      noteIndex = state.notes.findIndex((note) => note.id === action.id);
+      if (noteIndex === -1) return state;
+      [note] = state.notes.splice(noteIndex, 1);
+      state.notes.splice(action.index, 0, note);
+      return { ...state, notes: Array.from(state.notes) };
   }
 }
