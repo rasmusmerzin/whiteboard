@@ -1,12 +1,14 @@
-import { useCallback, useEffect, useState, useRef } from "react";
+import { useCallback, useEffect, useState, useRef, useContext } from "react";
 import styles from "./Note.module.css";
 import { throttle } from "./throttle";
 import { drag } from "./drag";
 import { useViewStore } from "./ViewStore";
 import { useBoardStore, type Note } from "./BoardStore";
 import { useNoteContextMenu } from "./NoteContextMenu";
+import { BoardRef } from "./Board";
 
 export function Note({ note }: { note: Note }) {
+  const board = useContext(BoardRef);
   const textarea = useRef<HTMLTextAreaElement>(null);
   const selected = useViewStore((state) => state.selected);
   const setSelected = useViewStore((state) => state.setSelected);
@@ -36,12 +38,13 @@ export function Note({ note }: { note: Note }) {
   useEffect(() => {
     if (note.id === selected && textarea.current) {
       const { setPosition } = useViewStore.getState();
-      const rect = textarea.current.getBoundingClientRect();
+      const textareaRect = textarea.current.getBoundingClientRect();
+      const boardRect = board.current!.getBoundingClientRect();
       if (
-        rect.top < 0 ||
-        rect.left < 0 ||
-        rect.bottom > window.innerHeight ||
-        rect.right > window.innerWidth
+        textareaRect.top < boardRect.top ||
+        textareaRect.left < boardRect.left ||
+        textareaRect.bottom > boardRect.bottom ||
+        textareaRect.right > boardRect.right
       )
         setPosition({ x: -note.position.x, y: -note.position.y });
       setTimeout(() => textarea.current?.focus());

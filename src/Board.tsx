@@ -1,13 +1,18 @@
 import styles from "./Board.module.css";
 import { Note } from "./Note";
-import { useContext, useRef } from "react";
+import { createContext, useContext, useRef } from "react";
 import { ContextMenuCallback } from "./ContextMenu";
 import { drag } from "./drag";
 import { useViewStore } from "./ViewStore";
 import { uid } from "./uid";
 import { useBoardStore } from "./BoardStore";
 
+export const BoardRef = createContext<React.RefObject<HTMLDivElement | null>>(
+  null!
+);
+
 export function Board() {
+  const board = useRef<HTMLDivElement>(null);
   const anchor = useRef<HTMLDivElement>(null);
   const position = useViewStore((state) => state.position);
   const setPosition = useViewStore((state) => state.setPosition);
@@ -40,31 +45,35 @@ export function Board() {
   return (
     <div className={styles.frame}>
       <div
+        ref={board}
         className={styles.board}
         onMouseDown={startDrag}
         onContextMenu={onContextMenu}
       >
-        <div
-          className={styles.background}
-          style={{
-            left: position.x % 24,
-            top: position.y % 24,
-          }}
-        ></div>
-        <div className={styles.anchor} ref={anchor}>
+        <BoardRef.Provider value={board}>
           <div
-            className={styles.origin}
+            className={styles.background}
             style={{
-              left: position.x,
-              top: position.y,
+              left: position.x % 24,
+              top: position.y % 24,
             }}
-          >
-            {notes.map((note) => (
-              <Note key={note.id} note={note} />
-            ))}
+          ></div>
+          <div className={styles.anchor} ref={anchor}>
+            <div
+              className={styles.origin}
+              style={{
+                left: position.x,
+                top: position.y,
+              }}
+            >
+              {notes.map((note) => (
+                <Note key={note.id} note={note} />
+              ))}
+            </div>
           </div>
-        </div>
-        <div className={styles.shadow}></div>
+
+          <div className={styles.shadow}></div>
+        </BoardRef.Provider>
       </div>
     </div>
   );
