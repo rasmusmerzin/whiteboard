@@ -1,19 +1,21 @@
-import { useContext, useMemo } from "react";
+import { useMemo } from "react";
 import styles from "./Toolbar.module.css";
 import { useViewStore } from "./viewStore";
-import { Document, DocumentDispatch } from "./Document";
 import { uid } from "./uid";
+import { useBoardStore } from "./boardStore";
 
 export function Toolbar() {
   const selected = useViewStore((state) => state.selected);
   const setSelected = useViewStore((state) => state.setSelected);
   const viewPosition = useViewStore((state) => state.position);
   const animatePosition = useViewStore((state) => state.animatePosition);
-  const document = useContext(Document);
-  const dispatch = useContext(DocumentDispatch);
+  const notes = useBoardStore((state) => state.notes);
+  const addNote = useBoardStore((state) => state.addNote);
+  const cloneNote = useBoardStore((state) => state.cloneNote);
+  const removeNote = useBoardStore((state) => state.removeNote);
   const note = useMemo(
-    () => document.notes.find((note) => note.id === selected),
-    [document.notes, selected]
+    () => notes.find((note) => note.id === selected),
+    [notes, selected]
   );
   return (
     <div className={styles.toolbar}>
@@ -21,11 +23,7 @@ export function Toolbar() {
         className={styles.button}
         onClick={() => {
           const id = uid();
-          dispatch({
-            id,
-            type: "addNote",
-            position: { x: -viewPosition.x, y: -viewPosition.y },
-          });
+          addNote(id, { x: -viewPosition.x, y: -viewPosition.y });
           setTimeout(() => setSelected(id));
         }}
       >
@@ -58,7 +56,7 @@ export function Toolbar() {
             className={styles.button}
             onMouseDown={() => {
               const cloneId = uid();
-              dispatch({ type: "cloneNote", id: note.id, cloneId });
+              cloneNote(note.id, cloneId);
               setTimeout(() => setSelected(cloneId));
             }}
           >
@@ -66,7 +64,7 @@ export function Toolbar() {
           </button>
           <button
             className={styles.button}
-            onMouseDown={() => dispatch({ type: "removeNote", id: note.id })}
+            onMouseDown={() => removeNote(note.id)}
           >
             <span>delete</span>
           </button>

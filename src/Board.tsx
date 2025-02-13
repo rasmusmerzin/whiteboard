@@ -1,20 +1,20 @@
 import styles from "./Board.module.css";
 import { Note } from "./Note";
 import { useContext, useRef } from "react";
-import { Document, DocumentDispatch } from "./Document";
 import { ContextMenuCallback } from "./ContextMenu";
 import { drag } from "./drag";
 import { useViewStore } from "./viewStore";
 import { uid } from "./uid";
+import { useBoardStore } from "./boardStore";
 
 export function Board() {
+  const anchor = useRef<HTMLDivElement>(null);
   const position = useViewStore((state) => state.position);
   const setPosition = useViewStore((state) => state.setPosition);
   const setSelected = useViewStore((state) => state.setSelected);
   const animatePosition = useViewStore((state) => state.animatePosition);
-  const anchor = useRef<HTMLDivElement>(null);
-  const data = useContext(Document);
-  const dispatch = useContext(DocumentDispatch);
+  const notes = useBoardStore((state) => state.notes);
+  const addNote = useBoardStore((state) => state.addNote);
   const onContextMenu = useContext(ContextMenuCallback)([
     {
       icon: "add",
@@ -22,13 +22,9 @@ export function Board() {
       action(event) {
         const rect = anchor.current!.getBoundingClientRect();
         const id = uid();
-        dispatch({
-          id,
-          type: "addNote",
-          position: {
-            x: event.clientX - rect.left - position.x,
-            y: event.clientY - rect.top - position.y,
-          },
+        addNote(id, {
+          x: event.clientX - rect.left - position.x,
+          y: event.clientY - rect.top - position.y,
         });
         setTimeout(() => setSelected(id));
       },
@@ -63,7 +59,7 @@ export function Board() {
               top: position.y,
             }}
           >
-            {data.notes.map((note) => (
+            {notes.map((note) => (
               <Note key={note.id} note={note} />
             ))}
           </div>

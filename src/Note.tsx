@@ -1,31 +1,34 @@
 import { useContext, useCallback, useEffect, useState, useRef } from "react";
 import styles from "./Note.module.css";
-import { type Note, DocumentDispatch } from "./Document";
 import { throttle } from "./throttle";
 import { ContextMenuCallback } from "./ContextMenu";
 import { drag } from "./drag";
 import { useViewStore } from "./viewStore";
 import { uid } from "./uid";
+import { useBoardStore, type Note } from "./boardStore";
 
 export function Note({ note }: { note: Note }) {
   const textarea = useRef<HTMLTextAreaElement>(null);
   const selected = useViewStore((state) => state.selected);
   const setSelected = useViewStore((state) => state.setSelected);
   const animatePosition = useViewStore((state) => state.animatePosition);
-  const dispatch = useContext(DocumentDispatch);
+  const moveNote = useBoardStore((state) => state.moveNote);
+  const updateNote = useBoardStore((state) => state.updateNote);
+  const popNote = useBoardStore((state) => state.popNote);
+  const removeNote = useBoardStore((state) => state.removeNote);
+  const cloneNote = useBoardStore((state) => state.cloneNote);
   const [position, setPosition] = useState(note.position);
   const [content, setContent] = useState(note.content);
   const dispatchPosition = useCallback(
-    throttle((position: { x: number; y: number }) => {
-      dispatch({ type: "moveNote", id: note.id, position });
-    }, 200),
-    [note.id, dispatch]
+    throttle(
+      (position: { x: number; y: number }) => moveNote(note.id, position),
+      200
+    ),
+    [note.id, moveNote]
   );
   const dispatchContent = useCallback(
-    throttle((content: string) => {
-      dispatch({ type: "updateNote", id: note.id, content });
-    }, 200),
-    [note.id, dispatch]
+    throttle((content: string) => updateNote(note.id, content), 200),
+    [note.id, updateNote]
   );
   const contextMenuCallback = useContext(ContextMenuCallback);
   useEffect(() => {
@@ -65,7 +68,7 @@ export function Note({ note }: { note: Note }) {
             label: "Clone",
             action: () => {
               const cloneId = uid();
-              dispatch({ type: "cloneNote", id: note.id, cloneId });
+              cloneNote(note.id, cloneId);
               setTimeout(() => setSelected(cloneId));
             },
           },
@@ -73,14 +76,14 @@ export function Note({ note }: { note: Note }) {
             icon: "delete",
             label: "Delete",
             action: () => {
-              dispatch({ type: "removeNote", id: note.id });
+              removeNote(note.id);
               setSelected("");
             },
           },
         ])(event);
       }}
       onFocus={() => {
-        dispatch({ type: "popNote", id: note.id });
+        popNote(note.id);
         setSelected(note.id);
       }}
       onBlur={() => setSelected("")}

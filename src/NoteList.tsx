@@ -1,12 +1,12 @@
 import styles from "./NoteList.module.css";
-import { useCallback, useContext, useEffect, useRef, useState } from "react";
-import { type Note, Document, DocumentDispatch } from "./Document";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useViewStore } from "./viewStore";
+import { type Note, useBoardStore } from "./boardStore";
 
 export function NoteList() {
-  const document = useContext(Document);
-  const dispatch = useContext(DocumentDispatch);
   const container = useRef<HTMLDivElement>(null);
+  const notes = useBoardStore((state) => state.notes);
+  const reorderNote = useBoardStore((state) => state.reorderNote);
   const [divider, setDivider] = useState<number | null>(null);
   const onDrag = useCallback(
     (event: React.DragEvent) => {
@@ -16,32 +16,28 @@ export function NoteList() {
         () =>
           setDivider(
             Math.round(
-              Math.min(Math.max(0, event.clientY - rect.top), rect.height) / 32,
-            ),
+              Math.min(Math.max(0, event.clientY - rect.top), rect.height) / 32
+            )
           ),
-        10,
+        10
       );
     },
-    [container.current, setDivider],
+    [container.current, setDivider]
   );
   const onDragEnd = useCallback(
     (note: Note) => {
       if (divider == null) return;
-      const noteIndex = document.notes.findIndex((n) => n.id === note.id);
+      const noteIndex = notes.findIndex((n) => n.id === note.id);
       const index = divider > noteIndex ? divider - 1 : divider;
-      dispatch({
-        type: "reorderNote",
-        id: note.id,
-        index,
-      });
+      reorderNote(note.id, index);
       setTimeout(() => setDivider(null), 10);
     },
-    [divider, setDivider],
+    [divider, setDivider]
   );
   return (
     <div className={styles.frame}>
       <div ref={container} className={styles.container}>
-        {document.notes.map((note) => (
+        {notes.map((note) => (
           <NoteListItem
             key={note.id}
             note={note}
