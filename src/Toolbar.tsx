@@ -1,8 +1,8 @@
 import { useMemo } from "react";
 import styles from "./Toolbar.module.css";
-import { useViewStore } from "./viewStore";
+import { useViewStore } from "./ViewStore";
 import { uid } from "./uid";
-import { useBoardStore } from "./boardStore";
+import { useBoardStore } from "./BoardStore";
 
 export function Toolbar() {
   const selected = useViewStore((state) => state.selected);

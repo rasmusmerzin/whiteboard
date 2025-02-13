@@ -1,7 +1,8 @@
 import styles from "./NoteList.module.css";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useViewStore } from "./viewStore";
-import { type Note, useBoardStore } from "./boardStore";
+import { useViewStore } from "./ViewStore";
+import { type Note, useBoardStore } from "./BoardStore";
+import { useNoteContextMenu } from "./NoteContextMenu";
 
 export function NoteList() {
   const container = useRef<HTMLDivElement>(null);
@@ -65,7 +66,7 @@ function NoteListItem({
   const button = useRef<HTMLButtonElement>(null);
   const selected = useViewStore((state) => state.selected);
   const setSelected = useViewStore((state) => state.setSelected);
-  const setPosition = useViewStore((state) => state.setPosition);
+  const onContextMenu = useNoteContextMenu(note);
   useEffect(() => {
     if (selected === note.id && button.current)
       button.current.scrollIntoView({ block: "center" });
@@ -78,11 +79,14 @@ function NoteListItem({
         styles.button + (selected === note.id ? ` ${styles.selected}` : "")
       }
       onMouseDown={() => {
-        setPosition({ x: -note.position.x, y: -note.position.y });
         setTimeout(() => setSelected(note.id));
       }}
       onDrag={onDrag}
       onDragEnd={() => onDragEnd(note)}
+      onContextMenu={(event) => {
+        onContextMenu(event);
+        setSelected(note.id);
+      }}
     >
       {note.content ? <span>{note.content}</span> : <i>Empty note</i>}
     </button>

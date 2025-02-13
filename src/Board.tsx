@@ -3,9 +3,9 @@ import { Note } from "./Note";
 import { useContext, useRef } from "react";
 import { ContextMenuCallback } from "./ContextMenu";
 import { drag } from "./drag";
-import { useViewStore } from "./viewStore";
+import { useViewStore } from "./ViewStore";
 import { uid } from "./uid";
-import { useBoardStore } from "./boardStore";
+import { useBoardStore } from "./BoardStore";
 
 export function Board() {
   const anchor = useRef<HTMLDivElement>(null);
