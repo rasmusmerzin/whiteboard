@@ -2,7 +2,7 @@ export function animatePosition(
   start: { x: number; y: number },
   end: { x: number; y: number },
   duration: number,
-  callback: (position: { x: number; y: number }) => void
+  callback: (position: { x: number; y: number }) => void,
 ) {
   const dx = end.x - start.x;
   const dy = end.y - start.y;

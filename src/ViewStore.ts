@@ -16,6 +16,6 @@ export const useViewStore = create<ViewStore>((set, get) => ({
   setSelected: (selected) => set({ selected }),
   animatePosition: (position) =>
     animatePosition(get().position, position, 100, (position) =>
-      set({ position })
+      set({ position }),
     ),
 }));

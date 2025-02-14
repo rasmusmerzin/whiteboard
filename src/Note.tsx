@@ -21,13 +21,13 @@ export function Note({ note }: { note: Note }) {
   const dispatchPosition = useCallback(
     throttle(
       (position: { x: number; y: number }) => moveNote(note.id, position),
-      200
+      200,
     ),
-    [note.id, moveNote]
+    [note.id, moveNote],
   );
   const dispatchContent = useCallback(
     throttle((content: string) => updateNote(note.id, content), 200),
-    [note.id, updateNote]
+    [note.id, updateNote],
   );
   useEffect(() => {
     setPosition(note.position);

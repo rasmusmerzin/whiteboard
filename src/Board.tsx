@@ -8,7 +8,7 @@ import { uid } from "./uid";
 import { useBoardStore } from "./BoardStore";
 
 export const BoardRef = createContext<React.RefObject<HTMLDivElement | null>>(
-  null!
+  null!,
 );
 
 export function Board() {

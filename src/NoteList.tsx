@@ -17,13 +17,13 @@ export function NoteList() {
         () =>
           setDivider(
             Math.round(
-              Math.min(Math.max(0, event.clientY - rect.top), rect.height) / 32
-            )
+              Math.min(Math.max(0, event.clientY - rect.top), rect.height) / 32,
+            ),
           ),
-        10
+        10,
       );
     },
-    [container.current, setDivider]
+    [container.current, setDivider],
   );
   const onDragEnd = useCallback(
     (note: Note) => {
@@ -33,7 +33,7 @@ export function NoteList() {
       reorderNote(note.id, index);
       setTimeout(() => setDivider(null), 10);
     },
-    [divider, setDivider]
+    [divider, setDivider],
   );
   return (
     <div className={styles.frame}>

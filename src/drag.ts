@@ -1,7 +1,7 @@
 export const drag =
   (
     position: { x: number; y: number },
-    setPosition: (value: { x: number; y: number }) => void
+    setPosition: (value: { x: number; y: number }) => void,
   ) =>
   (event: React.MouseEvent) => {
     if (event.button) return;

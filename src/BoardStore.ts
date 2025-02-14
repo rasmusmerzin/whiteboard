@@ -52,13 +52,13 @@ export const useBoardStore = create<BoardStore>((set, get) => ({
   moveNote: (id, position) =>
     set((state) => ({
       notes: state.notes.map((note) =>
-        note.id === id ? { ...note, position } : note
+        note.id === id ? { ...note, position } : note,
       ),
     })),
   updateNote: (id, content) =>
     set((state) => ({
       notes: state.notes.map((note) =>
-        note.id === id ? { ...note, content } : note
+        note.id === id ? { ...note, content } : note,
       ),
     })),
   popNote: (id) => {
@@ -72,7 +72,7 @@ export const useBoardStore = create<BoardStore>((set, get) => ({
           ? { ...note, z: note.z - 1 }
           : note.z === z
             ? { ...note, z: notes.length }
-            : note
+            : note,
       ),
     });
   },

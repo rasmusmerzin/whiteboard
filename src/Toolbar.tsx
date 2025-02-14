@@ -15,7 +15,7 @@ export function Toolbar() {
   const removeNote = useBoardStore((state) => state.removeNote);
   const note = useMemo(
     () => notes.find((note) => note.id === selected),
-    [notes, selected]
+    [notes, selected],
   );
   return (
     <div className={styles.toolbar}>

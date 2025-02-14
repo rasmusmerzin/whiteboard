@@ -11,7 +11,7 @@ export type ContextMenuAction = {
 };
 
 export type ContextMenuCallback = (
-  menu: ContextMenu
+  menu: ContextMenu,
 ) => (event: React.MouseEvent) => void;
 
 export const ContextMenuCallback = createContext<ContextMenuCallback>(null!);
@@ -30,7 +30,7 @@ export function ContextMenuProvider({
       setMenu(menu);
       setPosition({ x: event.clientX, y: event.clientY });
     },
-    [setMenu, setPosition]
+    [setMenu, setPosition],
   );
   return (
     <ContextMenuCallback.Provider value={callback}>
