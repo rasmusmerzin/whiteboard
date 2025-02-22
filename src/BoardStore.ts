@@ -101,3 +101,13 @@ export const useBoardStore = create<BoardStore>((set, get) => ({
     set({ notes });
   },
 }));
+
+initSync();
+
+function initSync() {
+  const board = localStorage.getItem("board");
+  if (board) useBoardStore.setState(JSON.parse(board));
+  useBoardStore.subscribe((state) =>
+    localStorage.setItem("board", JSON.stringify(state)),
+  );
+}

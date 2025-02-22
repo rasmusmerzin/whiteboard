@@ -41,10 +41,10 @@ export function Note({ note }: { note: Note }) {
       const textareaRect = textarea.current.getBoundingClientRect();
       const boardRect = board.current!.getBoundingClientRect();
       if (
-        textareaRect.top < boardRect.top ||
-        textareaRect.left < boardRect.left ||
-        textareaRect.bottom > boardRect.bottom ||
-        textareaRect.right > boardRect.right
+        textareaRect.bottom <= boardRect.top ||
+        textareaRect.right <= boardRect.left ||
+        textareaRect.top >= boardRect.bottom ||
+        textareaRect.left >= boardRect.right
       )
         setPosition({ x: -note.position.x, y: -note.position.y });
       setTimeout(() => textarea.current?.focus());
